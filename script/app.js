@@ -68,6 +68,29 @@ const updateTimeAndTimeLeft = (strMinutesLeft) => {
   timeLeftElement.innerText = strMinutesLeft;
 };
 
+// 5 TODO: maak updateSun functie
+let updateSun = function (sunLeftPosition, sunBottomPosition) {
+  sunElement.style.left = `${sunLeftPosition}%`;
+  sunElement.style.bottom = `${sunBottomPosition}%`;
+};
+
+// 4 Zet de zon op de juiste plaats en zorg ervoor dat dit iedere minuut gebeurt.
+let placeSunAndStartMoving = (totalTimeMinutes, minutesLeft) => {
+  const minutesPassed = totalTimeMinutes - minutesLeft;
+  const percentage = minutesPassed / totalTimeMinutes;
+  const degrees = percentage * 180;
+  const radians = DegToRads(degrees);
+  const leftPercent = percentage;
+  const bottomPercent = Math.sin(radians).toFixed(2);
+  if (bottomPercent < 0) bottomPercent = 0;
+  const sunLeftPosition = percentage * 100; //volledige width gebruiken
+  const sunBottomPosition = bottomPercent * 50 + 6; //zon laten uitsteken en helft van volledige height gebruiken
+
+  for (let i = 10; i >= 0; i--) {
+    setTimeout(updateSun(sunLeftPosition - 10 * i, sunBottomPosition - 10 * i), 200);
+  }
+};
+
 const getData = (endpoint) => {
   return fetch(endpoint)
     .then((response) => response.json())
@@ -96,5 +119,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   console.log(`Total: ${totalTimeMinutes}`);
   console.log(`Left: ${minutesLeft}`);
   updateTimeAndTimeLeft(minutesLeft);
-  placeSun(totalTimeMinutes, minutesLeft);
+  //placeSun(totalTimeMinutes, minutesLeft);
+  placeSunAndStartMoving(totalTimeMinutes, minutesLeft);
 });
